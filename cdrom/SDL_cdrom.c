@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -76,11 +76,9 @@ static int CheckInit(int check_cdrom, SDL_CD **cdrom)
 			okay = 0;
 		}
 	}
-
 	if ( ! SDL_cdinitted ) {
 		SDL_SetError("CD-ROM subsystem not initialized");
 	}
-
 	return(okay);
 }
 
@@ -255,6 +253,9 @@ int SDL_CDPlayTracks(SDL_CD *cdrom,
 	}
 
 	/* Play! */
+#ifdef DEBUG_CDROM
+  fprintf(stderr, "Playing %d frames at offset %d\n", length, start);
+#endif
 	return(SDL_CDcaps.Play(cdrom, start, length));
 }
 

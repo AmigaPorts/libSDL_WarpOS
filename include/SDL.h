@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2009 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -65,7 +65,7 @@ extern "C" {
 #define SDL_INIT_JOYSTICK	0x00000200
 #define SDL_INIT_NOPARACHUTE	0x00100000	/**< Don't catch fatal signals */
 #define SDL_INIT_EVENTTHREAD	0x01000000	/**< Not supported on all OS's */
-#define SDL_INIT_EVERYTHING	0x0000FFFF
+#define SDL_INIT_EVERYTHING	0x0000FEFF	/**< No CDROM init by default!  */
 /*@}*/
 
 /** This function loads the SDL dynamically linked library and initializes 

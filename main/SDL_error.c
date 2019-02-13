@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -25,9 +25,6 @@
 
 #include "SDL_error.h"
 #include "SDL_error_c.h"
-#include <stdarg.h>
-//#define SDL_arraysize(array)	(sizeof(array)/sizeof(array[0]))
-#define SDL_TABLESIZE(table)	SDL_arraysize(table) 
 
 /* Routine to get the thread-specific error variable */
 #if SDL_THREADS_DISABLED

@@ -1,6 +1,6 @@
 /*
     SDL - Simple DirectMedia Layer
-    Copyright (C) 1997-2006 Sam Lantinga
+    Copyright (C) 1997-2012 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -40,8 +40,6 @@
 #include "SDL_config_os2.h"
 #elif defined(WARPUP)
 #include "SDL_config_warpos.h"
-#elif defined(__AMIGA__)
-#include "SDL_config_amigaos.h"
 #else
 #include "SDL_config_minimal.h"
 #endif /* platform config */

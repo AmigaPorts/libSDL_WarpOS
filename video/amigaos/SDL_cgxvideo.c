@@ -484,6 +484,8 @@ static int CGX_VideoInit(_THIS, SDL_PixelFormat *vformat)
 		}
 	}
 
+	this->hidden->IntuiBase = IntuitionBase;
+
 // check if P96 is present and if we don't need the fix
 #ifndef AROS
     test = getenv("USE_P96_FIX");
@@ -683,7 +685,7 @@ void CGX_DestroyWindow(_THIS, SDL_Surface *screen)
 }
 
 static void CGX_SetSizeHints(_THIS, int w, int h, Uint32 flags)
-{
+{	
 	if ( flags & SDL_RESIZABLE ) {
 		WindowLimits(SDL_Window, 32, 32,4096,4096);
 	} else {
@@ -706,9 +708,7 @@ static void CGX_SetSizeHints(_THIS, int w, int h, Uint32 flags)
 struct Library *findlib(char *name)
 {
 	struct Library *lib;
-	Forbid();
 	lib = (struct Library *)FindName(&SysBase->LibList, name);
-	Permit();
 	return(lib);
 }
 
@@ -813,7 +813,7 @@ int CGX_CreateWindow(_THIS, SDL_Surface *screen,
 
 	/* Create (or use) the X11 display window */
 
-	ULONG idcmp = IDCMP_RAWKEY|IDCMP_MOUSEBUTTONS|IDCMP_MOUSEMOVE|IDCMP_ACTIVEWINDOW|IDCMP_INACTIVEWINDOW; //|IDCMP_MENUPICK;
+	ULONG idcmp = IDCMP_RAWKEY|IDCMP_MOUSEBUTTONS|IDCMP_MOUSEMOVE;
 
 	if (mouse_relative)
 	{
@@ -824,10 +824,10 @@ int CGX_CreateWindow(_THIS, SDL_Surface *screen,
 			if( flags & SDL_FULLSCREEN )
 			{
 				SDL_Window = OpenWindowTags(NULL,WA_Width,w,WA_Height,h,
-											WA_Flags,WFLG_ACTIVATE|WFLG_RMBTRAP|WFLG_BORDERLESS|WFLG_BACKDROP|WFLG_REPORTMOUSE,
-											WA_IDCMP,idcmp,
-											WA_CustomScreen,(ULONG)SDL_Display,
-											TAG_DONE);
+								WA_Flags,WFLG_ACTIVATE|WFLG_RMBTRAP|WFLG_BORDERLESS|WFLG_BACKDROP|WFLG_REPORTMOUSE,
+								WA_IDCMP,idcmp,
+								WA_CustomScreen,(ULONG)SDL_Display,
+								TAG_DONE);
 
 				D(bug("Opening backdrop window %ldx%ld on display %lx!\n",w,h,SDL_Display));
 			}
@@ -835,16 +835,18 @@ int CGX_CreateWindow(_THIS, SDL_Surface *screen,
 			{
 				/* Create GimmeZeroZero window when OpenGL is used */
 				unsigned long gzz = FALSE;
-//				if( flags & SDL_OPENGL ) {
-//					gzz = TRUE;
-//				}
+				if( (flags & SDL_OPENGL)  ||  (flags & SDL_HWSURFACE) ){
+					gzz = TRUE;
+				}
 
 				SDL_Window = OpenWindowTags(NULL,WA_InnerWidth,w,WA_InnerHeight,h,
-											WA_Flags,WFLG_REPORTMOUSE|WFLG_ACTIVATE|WFLG_RMBTRAP | ((flags&SDL_NOFRAME) ? 0 : (WFLG_DEPTHGADGET|WFLG_CLOSEGADGET|WFLG_DRAGBAR | ((flags&SDL_RESIZABLE) ? WFLG_SIZEGADGET|WFLG_SIZEBBOTTOM : 0))),
-											WA_IDCMP,idcmp|IDCMP_CLOSEWINDOW|IDCMP_NEWSIZE,
-											WA_PubScreen,(ULONG)SDL_Display,
-											WA_GimmeZeroZero, gzz,
-														TAG_DONE);
+								WA_Flags,WFLG_REPORTMOUSE|WFLG_ACTIVATE|WFLG_RMBTRAP |
+								((flags&SDL_NOFRAME) ? 0 : (WFLG_DEPTHGADGET|WFLG_CLOSEGADGET|WFLG_DRAGBAR |
+								((flags&SDL_RESIZABLE) ? WFLG_SIZEGADGET|WFLG_SIZEBBOTTOM : 0))),
+								WA_IDCMP,idcmp|IDCMP_CLOSEWINDOW|IDCMP_NEWSIZE|IDCMP_ACTIVEWINDOW|IDCMP_INACTIVEWINDOW,
+								WA_PubScreen,(ULONG)SDL_Display,
+								WA_GimmeZeroZero, gzz,
+								TAG_DONE);
 				D(bug("Opening WB window of size: %ldx%ld!\n",w,h));
 			}
 
@@ -869,14 +871,13 @@ int CGX_CreateWindow(_THIS, SDL_Surface *screen,
 		}
 	} 
 
-	if(findlib("pci.library")){
-		if(findlib("Radeon.card")||findlib("Voodoo.card")) {
-				this->hidden->swap_bytes = 1-this->hidden->swap_bytes;
-		}
-	} 
-	
-	if(findlib("trance.library")){
+	if(!findlib("CVisionPPC") && !findlib("BVisionPPC"))
+	{
 		this->hidden->swap_bytes = 1-this->hidden->swap_bytes;
+	} 
+	else
+	{
+		swap_pixels = 1;			//Need to byte swap 8 bit screens on Permedia 2
 	}
 				
 	this->hidden->BytesPerPixel=GetCyberMapAttr(SDL_Window->RPort->BitMap,CYBRMATTR_BPPIX);

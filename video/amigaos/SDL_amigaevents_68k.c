@@ -25,12 +25,26 @@ static char rcsid =
  "@(#) $Id$";
 #endif
 
-#include "SDL_cgxvideo.h"
+#include "SDL_amigaevents_c.h"
+#include <intuition/intuition.h>
+#include <exec/avl.h>
+#include <inline/exec_protos.h>
 
-/* Functions to be exported */
-extern void amiga_FreeWMCursor(_THIS, WMcursor *cursor);
-extern WMcursor *amiga_CreateWMCursor(_THIS,
-		Uint8 *data, Uint8 *mask, int w, int h, int hot_x, int hot_y);
-extern int amiga_ShowWMCursor(_THIS, WMcursor *cursor);
-extern void amiga_WarpWMCursor(_THIS, Uint16 x, Uint16 y);
-extern void amiga_CheckMouseMode(_THIS);
+int GetMessages68k(__reg("a1") struct MsgPort *port, __reg("a0") struct MsgStruct *msg,	 __reg("d0") int maxmsg)
+{
+ int i = 0;
+ struct IntuiMessage *imsg;
+
+ while ((imsg = (struct IntuiMessage *)GetMsg(port))) {
+   if (i < maxmsg) {
+     msg[i].Code = imsg->Code;
+     msg[i].Class = imsg->Class;
+     msg[i].Qualifier = imsg->Qualifier;
+     msg[i].MouseX = imsg->MouseX;
+     msg[i].MouseY = imsg->MouseY;
+     i++;
+   }
+   ReplyMsg((struct Message *)imsg);
+ }
+ return i;
+}
