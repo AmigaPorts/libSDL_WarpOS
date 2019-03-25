@@ -58,8 +58,6 @@
 #define HAVE_FREE 1
 #define HAVE_ALLOCA 1
 #define HAVE_GETENV 1
-#define HAVE_PUTENV 1
-#define HAVE_UNSETENV 1
 #define HAVE_QSORT 1
 #define HAVE_ABS 1
 #define HAVE_BCOPY 1
@@ -95,10 +93,12 @@
 #define HAVE_SSCANF 1
 #define HAVE_SNPRINTF 1
 #define HAVE_VSNPRINTF 1
-#define HAVE_SETJMP 1
 
 #undef HAVE_CLOCK_GETTIME
 #undef HAVE_SIGNAL_H
+#undef HAVE_UNSETENV
+#undef HAVE_PUTENV
+#undef HAVE_SETJMP
 
 /* Enable various audio drivers */
 #define SDL_AUDIO_DRIVER_AHI	1

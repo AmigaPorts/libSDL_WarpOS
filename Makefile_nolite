@@ -8,7 +8,7 @@ RL := ranlib
 VC  := vc
 VLD := vlink
 VCDEFINES = -DWARPOS -D__SIZE_T
-VCFLAGS = +aos68k -c99 -O3 -Iinclude -Igg:ppc-warpos/os-includeppc -Igg:ppc-warpos/include 
+VCFLAGS = +aos68k -c99 -O3 -Igg:os-includeppc -Igg:os-includeppc/sdl
 
 CFLAGS = --specs=warpup -maltivec -I. -I../include -I./include/ -I./include/SDL -O2 -fomit-frame-pointer
 GCCDEFINES = -DNO_AMIGADEBUG -DWARPOS -DSDL_ALTIVEC_COPY -DSDL_ALTIVEC_BLITTERS
@@ -40,12 +40,12 @@ VOBJSELF = video/amigaos/SDL_cgxwm_68k.go video/amigaos/SDL_amigaevents_68k.go
 %.ll: %.s
 	$(AS) -o $@ $*.s
 
-all: libSDL.a
+all: libSDL_wos.a
 
-libSDL.a: $(GOBJS) $(VOBJS)
-	-rm -f libSDL.a
-	ar cru libSDL.a $(GOBJS) $(VOBJSELF)
-	$(RL) libSDL.a
+libSDL_wos.a: $(GOBJS) $(VOBJS)
+	-rm -f libSDL_wos.a
+	ar cru libSDL_wos.a $(GOBJS) $(VOBJSELF)
+	$(RL) libSDL_wos.a
 
 clean:
 	-rm -f $(GOBJS) $(VOBJS) $(VOBJSELF)
